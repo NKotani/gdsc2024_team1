@@ -12,15 +12,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Personal TrAIner (PTAI)',
+      title: 'Personal TrAIner',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           brightness: Brightness.light,
-          seedColor: Colors.orange,
+          seedColor: const Color.fromARGB(255, 200, 128, 20),
         ),
         useMaterial3: true,
       ),
-      home: const ChatScreen(title: 'Personal TrAIner (PTAI)'),
+      home: const ChatScreen(title: 'Personal TrAIner'),
     );
   }
 }
