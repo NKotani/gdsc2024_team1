@@ -11,4 +11,4 @@ AI Personal Trainer App” using Gemini
 API_KEY=Write your API key here
 ```
 
-2. Use VS Code to run or `flutter run -d chrome --dart-define-from-file=.en`
+2. Use VS Code to run or `flutter run -d chrome --dart-define-from-file=.env`
