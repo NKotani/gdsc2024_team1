@@ -37,235 +37,109 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   static const apiKey = String.fromEnvironment('API_KEY');
 
+  // Define the list of questions and their corresponding options
+  final List<Map<String, dynamic>> questions = [
+    {
+      'question': 'Which workout do you prefer?',
+      'options': ['Cardio', 'Strength Training', 'Flexibility']
+    },
+    {
+      'question': 'How often do you exercise per week?',
+      'options': ['1-2 times', '3-4 times', '5-6 times']
+    },
+    {
+      'question': 'Preferred workout time?',
+      'options': ['Morning', 'Afternoon', 'Evening']
+    },
+  ];
+
+  // List to store the selected options for each question
+  List<String?> _selectedOptions = List<String?>.filled(3, null);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: const ChatWidget(apiKey: apiKey),
-    );
-  }
-}
-
-class ChatWidget extends StatefulWidget {
-  const ChatWidget({required this.apiKey, super.key});
-
-  final String apiKey;
-
-  @override
-  State<ChatWidget> createState() => _ChatWidgetState();
-}
-
-class _ChatWidgetState extends State<ChatWidget> {
-  late final GenerativeModel _model;
-  late final ChatSession _chat;
-  final ScrollController _scrollController = ScrollController();
-  final TextEditingController _textController = TextEditingController();
-  final FocusNode _textFieldFocus = FocusNode(debugLabel: 'TextField');
-  bool _loading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _model = GenerativeModel(
-      model: 'gemini-pro',
-      apiKey: widget.apiKey,
-    );
-    _chat = _model.startChat();
-  }
-
-  void _scrollDown() {
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(
-          milliseconds: 750,
-        ),
-        curve: Curves.easeOutCirc,
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final history = _chat.history.toList();
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              itemBuilder: (context, idx) {
-                final content = history[idx];
-                final text = content.parts
-                    .whereType<TextPart>()
-                    .map<String>((e) => e.text)
-                    .join('');
-                return MessageWidget(
-                  text: text,
-                  isFromUser: content.role == 'user',
-                );
-              },
-              itemCount: history.length,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: 25,
-              horizontal: 15,
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    autofocus: true,
-                    focusNode: _textFieldFocus,
-                    decoration:
-                        textFieldDecoration(context, 'Enter a prompt...'),
-                    controller: _textController,
-                    onSubmitted: (String value) {
-                      _sendChatMessage(value);
-                    },
-                  ),
-                ),
-                const SizedBox.square(dimension: 15),
-                if (!_loading)
-                  IconButton(
-                    onPressed: () async {
-                      _sendChatMessage(_textController.text);
-                    },
-                    icon: Icon(
-                      Icons.send,
-                      color: Theme.of(context).colorScheme.primary,
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                itemCount: questions.length,
+                itemBuilder: (context, index) {
+                  final questionData = questions[index];
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 20.0),
+                    child: RadioButtonWidget(
+                      question: questionData['question'],
+                      options: questionData['options'],
+                      selectedOption: _selectedOptions[index],
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedOptions[index] = value;
+                        });
+                      },
                     ),
-                  )
-                else
-                  const CircularProgressIndicator(),
-              ],
+                  );
+                },
+              ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _sendChatMessage(String message) async {
-    setState(() {
-      _loading = true;
-    });
-
-    try {
-      final response = await _chat.sendMessage(
-        Content.text(message),
-      );
-      final text = response.text;
-
-      if (text == null) {
-        _showError('Empty response.');
-        return;
-      } else {
-        setState(() {
-          _loading = false;
-          _scrollDown();
-        });
-      }
-    } catch (e) {
-      _showError(e.toString());
-      setState(() {
-        _loading = false;
-      });
-    } finally {
-      _textController.clear();
-      setState(() {
-        _loading = false;
-      });
-      _textFieldFocus.requestFocus();
-    }
-  }
-
-  void _showError(String message) {
-    showDialog<void>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Something went wrong'),
-          content: SingleChildScrollView(
-            child: Text(message),
-          ),
-          actions: [
-            TextButton(
+            ElevatedButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                // Handle form submission or display selected values
+                for (int i = 0; i < questions.length; i++) {
+                  print('Question: ${questions[i]['question']}');
+                  print('Selected Option: ${_selectedOptions[i]}');
+                }
               },
-              child: const Text('OK'),
-            )
+              child: const Text('Submit'),
+            ),
           ],
-        );
-      },
+        ),
+      ),
     );
   }
 }
 
-class MessageWidget extends StatelessWidget {
-  const MessageWidget({
-    super.key,
-    required this.text,
-    required this.isFromUser,
-  });
+class RadioButtonWidget extends StatelessWidget {
+  const RadioButtonWidget({
+    Key? key,
+    required this.question,
+    required this.options,
+    required this.selectedOption,
+    required this.onChanged,
+  }) : super(key: key);
 
-  final String text;
-  final bool isFromUser;
+  final String question;
+  final List<String> options;
+  final String? selectedOption;
+  final ValueChanged<String?> onChanged;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment:
-          isFromUser ? MainAxisAlignment.end : MainAxisAlignment.start,
-      children: [
-        Flexible(
-          child: Container(
-            constraints: const BoxConstraints(maxWidth: 480),
-            decoration: BoxDecoration(
-              color: isFromUser
-                  ? Theme.of(context).colorScheme.primaryContainer
-                  : Theme.of(context).colorScheme.surface,
-              borderRadius: BorderRadius.circular(18),
-            ),
-            padding: const EdgeInsets.symmetric(
-              vertical: 15,
-              horizontal: 20,
-            ),
-            margin: const EdgeInsets.only(bottom: 8),
-            child: MarkdownBody(data: text),
-          ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          question,
+          style: Theme.of(context).textTheme.titleMedium,
         ),
+        const SizedBox(height: 10),
+        // Dynamically generate radio buttons for the given options
+        ...options.map((option) {
+          return ListTile(
+            title: Text(option),
+            leading: Radio<String>(
+              value: option,
+              groupValue: selectedOption,
+              onChanged: onChanged,
+            ),
+          );
+        }).toList(),
       ],
     );
   }
 }
-
-InputDecoration textFieldDecoration(BuildContext context, String hintText) =>
-    InputDecoration(
-      contentPadding: const EdgeInsets.all(15),
-      hintText: hintText,
-      border: OutlineInputBorder(
-        borderRadius: const BorderRadius.all(
-          Radius.circular(14),
-        ),
-        borderSide: BorderSide(
-          color: Theme.of(context).colorScheme.secondary,
-        ),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: const BorderRadius.all(
-          Radius.circular(14),
-        ),
-        borderSide: BorderSide(
-          color: Theme.of(context).colorScheme.secondary,
-        ),
-      ),
-    );
