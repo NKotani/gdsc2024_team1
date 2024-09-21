@@ -1,6 +1,6 @@
-# gdsc2024_team1
+# Personal TrAIner (PTAI)
 
-AI Personal Trainer App” using Gemini 
+"AI Personal Trainer App" using Gemini 
 
 ## Getting Started
 
