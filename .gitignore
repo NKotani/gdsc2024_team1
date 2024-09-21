@@ -1,3 +1,6 @@
+# Prevent exposing your API keys
+.env 
+
 # Miscellaneous
 *.class
 *.log
