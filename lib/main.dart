@@ -15,8 +15,8 @@ class MyApp extends StatelessWidget {
       title: 'Flutter + Generative AI',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          brightness: Brightness.dark,
-          seedColor: const Color.fromARGB(255, 171, 222, 244),
+          brightness: Brightness.light,
+          seedColor: Colors.orange,
         ),
         useMaterial3: true,
       ),
