@@ -1,16 +1,14 @@
-# gemini
+# gdsc2024_team1
 
-A new Flutter project.
+AI Personal Trainer App” using Gemini 
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+1. Create gdsc2024_team1/.env (The .env file is gitignoreed)
 
-A few resources to get you started if this is your first Flutter project:
+.env
+```
+API_KEY=Write your API key here
+```
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+2. Use VS Code to run or `flutter run -d chrome --dart-define-from-file=.en`
