@@ -60,7 +60,20 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image(
+                image: AssetImage('logo-black.png'),
+                fit: BoxFit.contain,
+                height: 32,
+              ),
+              Container(
+               padding: const EdgeInsets.all(8.0),
+                child: Text(widget.title)
+              )
+            ],
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
