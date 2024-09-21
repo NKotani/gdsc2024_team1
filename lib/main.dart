@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
+import 'routine_page.dart';  // Import the RoutinePage
 
 void main() {
   runApp(const MyApp());
@@ -36,6 +36,8 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   static const apiKey = String.fromEnvironment('API_KEY');
+  late final GenerativeModel _model;
+  late final ChatSession _chat;
 
   // Define the list of questions and their corresponding options
   final List<Map<String, dynamic>> questions = [
@@ -57,23 +59,52 @@ class _ChatScreenState extends State<ChatScreen> {
   List<String?> _selectedOptions = List<String?>.filled(3, null);
 
   @override
+  void initState() {
+    super.initState();
+    _model = GenerativeModel(
+      model: 'gemini-pro',
+      apiKey: apiKey,
+    );
+    _chat = _model.startChat();
+  }
+
+  Future<void> _submitAnswers(BuildContext context) async {
+    // Combine the user's answers into a prompt
+    String userInput = _selectedOptions.whereType<String>().join(", ");
+
+    // Send the answers to the Gemini API and get the routine
+    final response = await _chat.sendMessage(
+      Content.text("Based on my answers: $userInput, can you recommend a fitness routine?"),
+    );
+    final routine = response.text ?? 'Error: No routine generated.';
+
+    // Navigate to the routine display page
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RoutinePage(routine: routine),
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     bool isAllAnswered = _selectedOptions.every((option) => option != null);
     return Scaffold(
       appBar: AppBar(
         title: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image(
-                image: AssetImage('logo-black.png'),
-                fit: BoxFit.contain,
-                height: 32,
-              ),
-              Container(
-               padding: const EdgeInsets.all(8.0),
-                child: Text(widget.title)
-              )
-            ],
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image(
+              image: AssetImage('logo-black.png'),
+              fit: BoxFit.contain,
+              height: 32,
+            ),
+            Container(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(widget.title),
+            ),
+          ],
         ),
       ),
       // Center the content
@@ -111,21 +142,15 @@ class _ChatScreenState extends State<ChatScreen> {
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 0.8,  
                   child: ElevatedButton(
-                  onPressed: isAllAnswered
-                  ? () {
-                    // Handle form submission or display selected values
-                    for (int i = 0; i < questions.length; i++) {
-                      print('Question: ${questions[i]['question']}');
-                      print('Selected Option: ${_selectedOptions[i]}');
-                    }
-                  }
-                  : null,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 15),  // Make the button taller
+                    onPressed: isAllAnswered
+                        ? () => _submitAnswers(context)  // Submit answers to the API
+                        : null,  // Disable button if not all options are selected
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 15),  // Make the button taller
+                    ),
+                    child: const Text('Submit'),
                   ),
-                  child: const Text('Submit'),
-                  ),
-                )
+                ),
               ],
             ),
           ),
@@ -183,7 +208,7 @@ class RadioButtonWidget extends StatelessWidget {
                     title: Center(
                       child: Text(
                         option,
-                        style: const TextStyle(color: Colors.black),  // Set option text color to white
+                        style: const TextStyle(color: Colors.black),  // Set option text color to black
                       ),
                     ),
                     leading: Radio<String>(
