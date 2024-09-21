@@ -40,15 +40,15 @@ class _ChatScreenState extends State<ChatScreen> {
   // Define the list of questions and their corresponding options
   final List<Map<String, dynamic>> questions = [
     {
-      'question': 'Which workout do you prefer?',
+      'question': '1. Which workout do you prefer?',
       'options': ['Cardio', 'Strength Training', 'Flexibility']
     },
     {
-      'question': 'How often do you exercise per week?',
+      'question': '2. How often do you exercise per week?',
       'options': ['1-2 times', '3-4 times', '5-6 times']
     },
     {
-      'question': 'Preferred workout time?',
+      'question': '3. Preferred workout time?',
       'options': ['Morning', 'Afternoon', 'Evening']
     },
   ];
@@ -58,6 +58,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bool isAllAnswered = _selectedOptions.every((option) => option != null);
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -75,42 +76,59 @@ class _ChatScreenState extends State<ChatScreen> {
             ],
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
-                itemCount: questions.length,
-                itemBuilder: (context, index) {
-                  final questionData = questions[index];
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 20.0),
-                    child: RadioButtonWidget(
-                      question: questionData['question'],
-                      options: questionData['options'],
-                      selectedOption: _selectedOptions[index],
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedOptions[index] = value;
-                        });
-                      },
-                    ),
-                  );
-                },
-              ),
+      // Center the content
+      body: Center(
+        // Make the content scrollable
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,  // Center the content horizontally
+              children: [
+                // Displaying the questions with radio buttons
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: questions.length,
+                  itemBuilder: (context, index) {
+                    final questionData = questions[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 20.0),
+                      child: RadioButtonWidget(
+                        question: questionData['question'],
+                        options: questionData['options'],
+                        selectedOption: _selectedOptions[index],
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedOptions[index] = value;
+                          });
+                        },
+                      ),
+                    );
+                  },
+                ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.8,  
+                  child: ElevatedButton(
+                  onPressed: isAllAnswered
+                  ? () {
+                    // Handle form submission or display selected values
+                    for (int i = 0; i < questions.length; i++) {
+                      print('Question: ${questions[i]['question']}');
+                      print('Selected Option: ${_selectedOptions[i]}');
+                    }
+                  }
+                  : null,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 15),  // Make the button taller
+                  ),
+                  child: const Text('Submit'),
+                  ),
+                )
+              ],
             ),
-            ElevatedButton(
-              onPressed: () {
-                // Handle form submission or display selected values
-                for (int i = 0; i < questions.length; i++) {
-                  print('Question: ${questions[i]['question']}');
-                  print('Selected Option: ${_selectedOptions[i]}');
-                }
-              },
-              child: const Text('Submit'),
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -133,26 +151,53 @@ class RadioButtonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          question,
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
-        const SizedBox(height: 10),
-        // Dynamically generate radio buttons for the given options
-        ...options.map((option) {
-          return ListTile(
-            title: Text(option),
-            leading: Radio<String>(
-              value: option,
-              groupValue: selectedOption,
-              onChanged: onChanged,
+    return Card(
+      elevation: 4.0,  // Add some elevation to give the card a shadow effect
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),  // Rounded edges for the card
+      ),
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),  // Set margin for spacing
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),  // Add padding inside the card
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,  // Center the content
+          children: <Widget>[
+            Text(
+              question,
+              textAlign: TextAlign.center,  // Center the question text
+              style: Theme.of(context).textTheme.titleMedium,
             ),
-          );
-        }).toList(),
-      ],
+            const SizedBox(height: 10),
+            // Center and generate radio buttons for the given options, each inside a narrow card
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,  // Center the options horizontally
+              children: options.map((option) {
+                return Card(
+                  color: Colors.white,  // Set background color for the card
+                  margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10), // Narrow card for each option
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  elevation: 2.0,  // Add some elevation for the option cards
+                  child: ListTile(
+                    title: Center(
+                      child: Text(
+                        option,
+                        style: const TextStyle(color: Colors.black),  // Set option text color to white
+                      ),
+                    ),
+                    leading: Radio<String>(
+                      value: option,
+                      groupValue: selectedOption,
+                      onChanged: onChanged,
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
