@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const ChatScreen(title: 'Flutter + Generative AI'),
+      home: const ChatScreen(title: 'Personal TrAIner'),
     );
   }
 }
