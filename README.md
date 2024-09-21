@@ -8,7 +8,7 @@
 
 .env
 ```
-API_KEY=Write your API key here
+AIzaSyDkF2yVFz1bNxuoEHY1NGMW-jQmY0QOduc
 ```
 
 2. Use VS Code to run or `flutter run -d chrome --dart-define-from-file=.env`
