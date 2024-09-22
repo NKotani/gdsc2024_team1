@@ -82,7 +82,7 @@ class _QuestionAnswerPageState extends State<QuestionAnswerPage> {
                     padding: const EdgeInsets.all(12.0),
                     margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                     decoration: BoxDecoration(
-                      color: chatItem['role'] == 'user' ? Colors.blue[100] : Colors.grey[200],
+                      color: chatItem['role'] == 'user' ? Colors.deepOrangeAccent.withOpacity(0.5) : Theme.of(context).canvasColor,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: MarkdownBody(data: chatItem['text']!),
