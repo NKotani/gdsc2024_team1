@@ -12,3 +12,7 @@ API_KEY=Write your API key here
 ```
 
 2. Use VS Code to run or `flutter run -d chrome --dart-define-from-file=.env`
+
+
+### How to run on iPhone
+`flutter run --dart-define-from-file=.env`
