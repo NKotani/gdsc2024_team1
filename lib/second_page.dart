@@ -21,15 +21,15 @@ class _SecondPageState extends State<SecondPage> {
   final List<Map<String, dynamic>> questionsPage2 = [
     {
       'question': '4. How much time do you have to exercise? ⏱️',
-      'options': ['15 minutes', '30 minutes', '45 minutes', '1 hour']
+      'options': ['15 minutes', '30 minutes', '1 hour', '2 hours']
     },
     {
-      'question': '5. How are you feeling today?',
-      'options': ['Energetic ⚡', 'Good 😊', 'Just right 👍', 'Tired 😴', 'Sick 🤒']
+      'question':'5.Which part of your body do you want to train?',
+      'options': ['Upper Body (Chest, Back, Arms) 💪','Lower Body (Legs, Glutes) 🦵', 'Core (Abs, Obliques) 🤸', 'Full Body 🏋️‍♂️']
     },
     {
-      'question': '6. What do you want to feel after exercising?',
-      'options': ['Relaxed 🧘', 'Energetic ⚡', 'Stress-free 🌈', 'Tired 😌']
+      'question': '6. How intense do you want the workout to be?',
+      'options': ['Light 🌿', 'Moderate 😊👍', 'Intense 🔥']
     },
   ];
 
@@ -59,7 +59,12 @@ class _SecondPageState extends State<SecondPage> {
 
     // Simulate API call (you can replace this with real API call)
     final response = await _chat.sendMessage(
-      Content.text("Based on my answers: $userInput, can you recommend a fitness routine?"),
+      Content.text(
+        "Based on my answers: " +
+        "$userInput, " +
+        "If user's input is flexibility, it means yoga or any relazing exercise" +
+        "can you recommend a 1 day fitness routine?"
+      ),   
     );
     final routine = response.text ?? 'Error: No routine generated.';
 
