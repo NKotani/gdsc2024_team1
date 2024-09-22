@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 
+import 'question.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -110,6 +112,7 @@ class _ChatScreenState extends State<ChatScreen> {
               },
               child: const Text('Submit'),
             ),
+            QuestionWidget(),
           ],
         ),
       ),
