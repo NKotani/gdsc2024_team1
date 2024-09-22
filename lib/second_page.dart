@@ -63,7 +63,8 @@ class _SecondPageState extends State<SecondPage> {
         "Based on my answers: " +
         "$userInput, " +
         "If user's input is flexibility, it means yoga or any relaxing exercise" +
-        "can you recommend a single day fitness routine?"
+        "no need to put date like monday or tuesday etc" +
+        "can you recommend a detailed one day fitness routine?"
       ),   
     );
     final routine = response.text ?? 'Error: No routine generated.';
