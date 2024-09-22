@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 
 class QuestionAnswerPage extends StatefulWidget {
@@ -52,7 +53,22 @@ class _QuestionAnswerPageState extends State<QuestionAnswerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Chat with Gemini')),
+      appBar: AppBar(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image(
+              image: AssetImage('logo-black.png'),
+              fit: BoxFit.contain,
+              height: 32,
+            ),
+            Container(
+              padding: const EdgeInsets.all(8.0),
+              child: Text('Chat with your Personal trAIner')
+            )
+          ],
+        ),
+      ),
       body: Column(
         children: [
           Expanded(
@@ -69,10 +85,7 @@ class _QuestionAnswerPageState extends State<QuestionAnswerPage> {
                       color: chatItem['role'] == 'user' ? Colors.blue[100] : Colors.grey[200],
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Text(
-                      chatItem['text']!,
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    ),
+                    child: MarkdownBody(data: chatItem['text']!),
                   ),
                 );
               },
@@ -84,7 +97,10 @@ class _QuestionAnswerPageState extends State<QuestionAnswerPage> {
               child: CircularProgressIndicator(),
             ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.symmetric(
+              vertical: 25,
+              horizontal: 15,
+            ),
             child: Row(
               children: [
                 Expanded(
@@ -99,7 +115,7 @@ class _QuestionAnswerPageState extends State<QuestionAnswerPage> {
                 const SizedBox(width: 10),
                 IconButton(
                   icon: const Icon(Icons.send),
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).colorScheme.primary,
                   onPressed: () {
                     if (_questionController.text.isNotEmpty) {
                       _askGemini(widget.routine, _questionController.text);

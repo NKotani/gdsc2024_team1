@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'question_answer_page.dart';  // Import the QuestionAnswerPage
 
 class RoutinePage extends StatelessWidget {
@@ -11,17 +12,29 @@ class RoutinePage extends StatelessWidget {
     TextEditingController _questionController = TextEditingController();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Your Routine')),
+      appBar: AppBar(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image(
+              image: AssetImage('logo-black.png'),
+              fit: BoxFit.contain,
+              height: 32,
+            ),
+            Container(
+              padding: const EdgeInsets.all(8.0),
+              child: Text('Your Routine')
+            )
+          ],
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             Expanded(
               child: SingleChildScrollView(
-                child: Text(
-                  routine,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
+                child: MarkdownBody(data: routine),
               ),
             ),
             const SizedBox(height: 20),
