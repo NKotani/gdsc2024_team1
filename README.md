@@ -15,4 +15,6 @@ API_KEY=Write your API key here
 
 
 ### How to run on iPhone
-`flutter run --dart-define-from-file=.env`
+1. Install Xcode (Confirm `/usr/bin/xcodebuild -version`)
+2. `flutter devices` Confirmation that your iphone is detected
+3. `flutter run --dart-define-from-file=.env` Choose your iphone
