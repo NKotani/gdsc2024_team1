@@ -5,27 +5,52 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  // State variable to keep track of the theme mode (light or dark)
+  ThemeMode _themeMode = ThemeMode.light;
+
+  // Function to toggle between light and dark mode
+  void _toggleTheme(bool isDarkMode) {
+    setState(() {
+      _themeMode = isDarkMode ? ThemeMode.dark : ThemeMode.light;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'PTAI',
-      theme: ThemeData(
+      theme: ThemeData(  // Light theme
         colorScheme: ColorScheme.fromSeed(
-          brightness: Brightness.light,
           seedColor: const Color.fromARGB(255, 200, 128, 20),
+          brightness: Brightness.light,
         ),
         useMaterial3: true,
       ),
-      home: const MainPage(),
+      darkTheme: ThemeData(  // Dark theme
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF212121),
+          brightness: Brightness.dark,
+        ),
+        useMaterial3: true,
+        scaffoldBackgroundColor: Colors.black,  // Set background color for dark mode
+      ),
+      themeMode: _themeMode,  // Use the theme mode from state
+      home: MainPage(onToggleTheme: _toggleTheme),  // Pass the toggle function
     );
   }
 }
 
 class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+  final Function(bool) onToggleTheme;
+  const MainPage({super.key, required this.onToggleTheme});
 
   @override
   _MainPageState createState() => _MainPageState();
@@ -34,6 +59,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
+  bool _isDarkMode = false;  // State variable for the toggle switch
 
   @override
   void initState() {
@@ -59,18 +85,32 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text('Personal TrAIner'),
+            // Toggle switch to switch between light and dark mode
+            Row(
+              children: [
+                const Icon(Icons.wb_sunny),  // Sun icon for light mode
+                Switch(
+                  value: _isDarkMode,
+                  onChanged: (value) {
+                    setState(() {
+                      _isDarkMode = value;
+                    });
+                    widget.onToggleTheme(value);  // Call the function to toggle theme
+                  },
+                ),
+                const Icon(Icons.nights_stay),  // Moon icon for dark mode
+              ],
+            ),
+          ],
+        ),
+      ),
       body: Stack(
         children: [
-          // Background image
-          // Container(
-          //   decoration: const BoxDecoration(
-          //     image: DecorationImage(
-          //       image: AssetImage('assets/fitness_bg.jpg'),  // Original background image
-          //       fit: BoxFit.cover,
-          //     ),
-          //   ),
-          // ),
-          // Content section
           Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -86,7 +126,6 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                   style: TextStyle(
                     fontSize: 38,
                     fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 0, 0, 0),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -98,7 +137,6 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w400,
-                      color: Color.fromARGB(179, 0, 0, 0),
                     ),
                   ),
                 ),
@@ -132,11 +170,11 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                   builder: (context, child) {
                     return Padding(
                       padding: EdgeInsets.only(bottom: _animation.value),
-                      child: const Icon(
-                        Icons.arrow_downward,
-                        color: Colors.white,
-                        size: 32,
-                      ),
+                      // child: const Icon(
+                      //   Icons.arrow_right_alt,
+                      //   color: Color.fromARGB(255, 120, 120, 120),
+                      //   size: 32,
+                      // ),
                     );
                   },
                 ),

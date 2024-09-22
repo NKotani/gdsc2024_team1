@@ -21,7 +21,7 @@ class _SecondPageState extends State<SecondPage> {
   final List<Map<String, dynamic>> questionsPage2 = [
     {
       'question': '4. How much time do you have to exercise? ⏱️',
-      'options': ['15 minutes', '30 minutes', '1 hour', '2 hours']
+      'options': ['30 min', '1 hr', '1 hr 30 min', '2 hr']
     },
     {
       'question':'5.Which part of your body do you want to train?',
@@ -62,8 +62,8 @@ class _SecondPageState extends State<SecondPage> {
       Content.text(
         "Based on my answers: " +
         "$userInput, " +
-        "If user's input is flexibility, it means yoga or any relazing exercise" +
-        "can you recommend a 1 day fitness routine?"
+        "If user's input is flexibility, it means yoga or any relaxing exercise" +
+        "can you recommend a single day fitness routine?"
       ),   
     );
     final routine = response.text ?? 'Error: No routine generated.';
