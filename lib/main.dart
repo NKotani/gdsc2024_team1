@@ -62,14 +62,14 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
       body: Stack(
         children: [
           // Background image
-          Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/fitness_bg.jpg'),  // Original background image
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
+          // Container(
+          //   decoration: const BoxDecoration(
+          //     image: DecorationImage(
+          //       image: AssetImage('assets/fitness_bg.jpg'),  // Original background image
+          //       fit: BoxFit.cover,
+          //     ),
+          //   ),
+          // ),
           // Content section
           Center(
             child: Column(
