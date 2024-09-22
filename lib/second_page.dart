@@ -64,6 +64,7 @@ class _SecondPageState extends State<SecondPage> {
         "$userInput, " +
         "If user's input is flexibility, it means yoga or any relaxing exercise" +
         "no need to put date like monday or tuesday etc" +
+        "Don't put day 1" +
         "can you recommend a detailed one day fitness routine?"
       ),   
     );
