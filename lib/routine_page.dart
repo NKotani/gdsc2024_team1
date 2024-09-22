@@ -53,7 +53,7 @@ class RoutinePage extends StatelessWidget {
                 const SizedBox(width: 10),
                 IconButton(
                   icon: const Icon(Icons.send),  // Icon for the send button
-                  color: Theme.of(context).primaryColor,
+                  color: Colors.grey[600],
                   onPressed: () {
                     if (_questionController.text.isNotEmpty) {
                       // Navigate to the QuestionAnswerPage with the user's question
