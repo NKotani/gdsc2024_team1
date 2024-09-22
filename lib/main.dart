@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
-import 'routine_page.dart';  // Import the RoutinePage
+import 'second_page.dart';
+import 'routine_page.dart';
+import 'radio_button_widget.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,7 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Personal TrAIner',
+      title: 'PTAI',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           brightness: Brightness.light,
@@ -20,76 +22,39 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const ChatScreen(title: 'Personal TrAIner'),
+      home: const FirstPage(),
     );
   }
 }
 
-class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key, required this.title});
-
-  final String title;
+class FirstPage extends StatefulWidget {
+  const FirstPage({super.key});
 
   @override
-  State<ChatScreen> createState() => _ChatScreenState();
+  State<FirstPage> createState() => _FirstPageState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
-  static const apiKey = String.fromEnvironment('API_KEY');
-  late final GenerativeModel _model;
-  late final ChatSession _chat;
-
-  // Define the list of questions and their corresponding options
-  final List<Map<String, dynamic>> questions = [
+class _FirstPageState extends State<FirstPage> {
+  final List<Map<String, dynamic>> questionsPage1 = [
     {
-      'question': '1. Which workout do you prefer?',
-      'options': ['Cardio', 'Strength Training', 'Flexibility']
+      'question': '1. What are your fitness goals?',
+      'options': ['Weight loss 🏃‍♀️', 'Muscle gain 💪', 'Endurance 🏋️‍♂️', 'Flexibility 🧘‍♀️']
     },
     {
-      'question': '2. How often do you exercise per week?',
-      'options': ['1-2 times', '3-4 times', '5-6 times']
+      'question': '2. Where are you working out today?',
+      'options': ['Home 🏡', 'Gym 🏋️', 'Outside (Park) 🌳']
     },
     {
       'question': '3. Preferred workout time?',
-      'options': ['Morning', 'Afternoon', 'Evening']
+      'options': ['Morning ☀️', 'Afternoon 🌤️', 'Evening 🌙']
     },
   ];
 
-  // List to store the selected options for each question
-  List<String?> _selectedOptions = List<String?>.filled(3, null);
-
-  @override
-  void initState() {
-    super.initState();
-    _model = GenerativeModel(
-      model: 'gemini-pro',
-      apiKey: apiKey,
-    );
-    _chat = _model.startChat();
-  }
-
-  Future<void> _submitAnswers(BuildContext context) async {
-    // Combine the user's answers into a prompt
-    String userInput = _selectedOptions.whereType<String>().join(", ");
-
-    // Send the answers to the Gemini API and get the routine
-    final response = await _chat.sendMessage(
-      Content.text("Based on my answers: $userInput, can you recommend a fitness routine?"),
-    );
-    final routine = response.text ?? 'Error: No routine generated.';
-
-    // Navigate to the routine display page
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => RoutinePage(routine: routine),
-      ),
-    );
-  }
+  List<String?> _selectedOptionsPage1 = List<String?>.filled(3, null);
 
   @override
   Widget build(BuildContext context) {
-    bool isAllAnswered = _selectedOptions.every((option) => option != null);
+    bool isPage1Completed = _selectedOptionsPage1.every((option) => option != null);
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -98,41 +63,35 @@ class _ChatScreenState extends State<ChatScreen> {
             Image(
               image: AssetImage('logo-black.png'),
               fit: BoxFit.contain,
-              height: 32,
+              height: 32,  // Adjust the height of the image if needed
             ),
-            Container(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(widget.title),
-            ),
+            const SizedBox(width: 8),  // Add some space between the image and the title
+            const Text('Personal TrAIner - Page 1/2'),
           ],
         ),
+        centerTitle: true,  // Center the title and image horizontally
       ),
-      // Center the content
       body: Center(
-        // Make the content scrollable
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,  // Center the content horizontally
               children: [
-                // Displaying the questions with radio buttons
                 ListView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  itemCount: questions.length,
+                  itemCount: questionsPage1.length,
                   itemBuilder: (context, index) {
-                    final questionData = questions[index];
+                    final questionData = questionsPage1[index];
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 20.0),
                       child: RadioButtonWidget(
                         question: questionData['question'],
                         options: questionData['options'],
-                        selectedOption: _selectedOptions[index],
+                        selectedOption: _selectedOptionsPage1[index],
                         onChanged: (value) {
                           setState(() {
-                            _selectedOptions[index] = value;
+                            _selectedOptionsPage1[index] = value;
                           });
                         },
                       ),
@@ -140,87 +99,26 @@ class _ChatScreenState extends State<ChatScreen> {
                   },
                 ),
                 SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.8,  
+                  width: MediaQuery.of(context).size.width * 0.8,
                   child: ElevatedButton(
-                    onPressed: isAllAnswered
-                        ? () => _submitAnswers(context)  // Submit answers to the API
-                        : null,  // Disable button if not all options are selected
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 15),  // Make the button taller
-                    ),
-                    child: const Text('Submit'),
+                    onPressed: isPage1Completed
+                        ? () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SecondPage(
+                                  answersPage1: _selectedOptionsPage1,
+                                ),
+                              ),
+                            );
+                          }
+                        : null,
+                    child: const Text('Next'),
                   ),
                 ),
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class RadioButtonWidget extends StatelessWidget {
-  const RadioButtonWidget({
-    Key? key,
-    required this.question,
-    required this.options,
-    required this.selectedOption,
-    required this.onChanged,
-  }) : super(key: key);
-
-  final String question;
-  final List<String> options;
-  final String? selectedOption;
-  final ValueChanged<String?> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 4.0,  // Add some elevation to give the card a shadow effect
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15.0),  // Rounded edges for the card
-      ),
-      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),  // Set margin for spacing
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),  // Add padding inside the card
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,  // Center the content
-          children: <Widget>[
-            Text(
-              question,
-              textAlign: TextAlign.center,  // Center the question text
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 10),
-            // Center and generate radio buttons for the given options, each inside a narrow card
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,  // Center the options horizontally
-              children: options.map((option) {
-                return Card(
-                  color: Colors.white,  // Set background color for the card
-                  margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10), // Narrow card for each option
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  elevation: 2.0,  // Add some elevation for the option cards
-                  child: ListTile(
-                    title: Center(
-                      child: Text(
-                        option,
-                        style: const TextStyle(color: Colors.black),  // Set option text color to black
-                      ),
-                    ),
-                    leading: Radio<String>(
-                      value: option,
-                      groupValue: selectedOption,
-                      onChanged: onChanged,
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-          ],
         ),
       ),
     );
