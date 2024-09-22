@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_generative_ai/google_generative_ai.dart';
-import 'second_page.dart';
-import 'routine_page.dart';
-import 'radio_button_widget.dart';
+import 'first_page.dart';  // Import the FirstPage for the first question page
 
 void main() {
   runApp(const MyApp());
@@ -22,104 +19,131 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const FirstPage(),
+      home: const MainPage(),
     );
   }
 }
 
-class FirstPage extends StatefulWidget {
-  const FirstPage({super.key});
+class MainPage extends StatefulWidget {
+  const MainPage({super.key});
 
   @override
-  State<FirstPage> createState() => _FirstPageState();
+  _MainPageState createState() => _MainPageState();
 }
 
-class _FirstPageState extends State<FirstPage> {
-  final List<Map<String, dynamic>> questionsPage1 = [
-    {
-      'question': '1. What are your fitness goals?',
-      'options': ['Weight loss 🏃‍♀️', 'Muscle gain 💪', 'Endurance 🏋️‍♂️', 'Flexibility 🧘‍♀️']
-    },
-    {
-      'question': '2. Where are you working out today?',
-      'options': ['Home 🏡', 'Gym 🏋️', 'Outside (Park) 🌳']
-    },
-    {
-      'question': '3. Preferred workout time?',
-      'options': ['Morning ☀️', 'Afternoon 🌤️', 'Evening 🌙']
-    },
-  ];
+class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
 
-  List<String?> _selectedOptionsPage1 = List<String?>.filled(3, null);
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the animation controller
+    _controller = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..repeat(reverse: true);
+
+    // Define a bounce animation for the arrow
+    _animation = Tween<double>(begin: 0.0, end: 10.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    bool isPage1Completed = _selectedOptionsPage1.every((option) => option != null);
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image(
-              image: AssetImage('logo-black.png'),
-              fit: BoxFit.contain,
-              height: 32,  // Adjust the height of the image if needed
+      body: Stack(
+        children: [
+          // Background image
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/fitness_bg.jpg'),  // Original background image
+                fit: BoxFit.cover,
+              ),
             ),
-            const SizedBox(width: 8),  // Add some space between the image and the title
-            const Text('Personal TrAIner - Page 1/2'),
-          ],
-        ),
-        centerTitle: true,  // Center the title and image horizontally
-      ),
-      body: Center(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
+          ),
+          // Content section
+          Center(
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: questionsPage1.length,
-                  itemBuilder: (context, index) {
-                    final questionData = questionsPage1[index];
+                // Logo above the app name
+                const Image(
+                  image: AssetImage('logo-black.png'),  // Logo image
+                  height: 80,  // Adjust logo size
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'PTAI',  // App name
+                  style: TextStyle(
+                    fontSize: 38,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromARGB(255, 0, 0, 0),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 40.0),
+                  child: Text(
+                    'Your AI-powered personal fitness trainer. Start your fitness journey today and achieve your goals with customized plans.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w400,
+                      color: Color.fromARGB(179, 0, 0, 0),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 40),
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.fitness_center),
+                  label: const Text('Start Your Journey'),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const FirstPage(),  // Navigate directly to FirstPage
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepOrangeAccent,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 30,
+                      vertical: 15,
+                    ),
+                    textStyle: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 80),
+                AnimatedBuilder(
+                  animation: _animation,
+                  builder: (context, child) {
                     return Padding(
-                      padding: const EdgeInsets.only(bottom: 20.0),
-                      child: RadioButtonWidget(
-                        question: questionData['question'],
-                        options: questionData['options'],
-                        selectedOption: _selectedOptionsPage1[index],
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedOptionsPage1[index] = value;
-                          });
-                        },
+                      padding: EdgeInsets.only(bottom: _animation.value),
+                      child: const Icon(
+                        Icons.arrow_downward,
+                        color: Colors.white,
+                        size: 32,
                       ),
                     );
                   },
                 ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  child: ElevatedButton(
-                    onPressed: isPage1Completed
-                        ? () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => SecondPage(
-                                  answersPage1: _selectedOptionsPage1,
-                                ),
-                              ),
-                            );
-                          }
-                        : null,
-                    child: const Text('Next'),
-                  ),
-                ),
               ],
             ),
           ),
-        ),
+        ],
       ),
     );
   }

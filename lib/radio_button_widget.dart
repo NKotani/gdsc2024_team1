@@ -39,27 +39,38 @@ class RadioButtonWidget extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: options.map((option) {
-                return Card(
-                  color: Colors.white,  // Set the background color to white
-                  margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),  // Rounded edges for each option
-                  ),
-                  elevation: 2.0,  // Add some elevation for the option cards
-                  child: ListTile(
-                    title: Center(
-                      child: Text(
-                        option,
-                        style: const TextStyle(
-                          fontSize: 15.0,  // Increase font size slightly to show emojis fully
-                          color: Colors.black,  // Set text color to black
-                        ),
-                      ),
+                return GestureDetector(
+                  onTap: () {
+                    onChanged(option);  // Trigger the onChanged callback when the card is tapped
+                  },
+                  child: Card(
+                    color: Colors.white,  // Set the background color to white
+                    margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),  // Rounded edges for each option
                     ),
-                    leading: Radio<String>(
-                      value: option,
-                      groupValue: selectedOption,
-                      onChanged: onChanged,
+                    elevation: 2.0,  // Add some elevation for the option cards
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          Radio<String>(
+                            value: option,
+                            groupValue: selectedOption,
+                            onChanged: onChanged,  // Update the selected value on tap
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              option,
+                              style: const TextStyle(
+                                fontSize: 15.0,  // Increase font size slightly to show emojis fully
+                                color: Colors.black,  // Set text color to black
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );
